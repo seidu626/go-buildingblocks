@@ -27,9 +27,11 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/workspaces v1.36.0
 	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
+	github.com/onrik/logrus v0.11.0
 	github.com/pkg/errors v0.9.1
 	github.com/pkg/sftp v1.13.6
 	github.com/schollz/progressbar/v3 v3.14.1
+	github.com/sirupsen/logrus v1.9.3
 	golang.org/x/crypto v0.19.0
 	golang.org/x/exp v0.0.0-20240205201215-2c58cdc269a3
 	golang.org/x/net v0.21.0
