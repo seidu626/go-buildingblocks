@@ -2,11 +2,12 @@ package dbx
 
 import (
 	"context"
+	"github.com/seidu626/go-buildingblocks/config"
+	"go.uber.org/zap"
 	"log"
 	"os"
 	"testing"
 
-	"github.com/jackc/pgx/v5/log/testingadapter"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/tracelog"
@@ -23,7 +24,7 @@ func TestMain(m *testing.M) {
 func TestNewPGXPool(t *testing.T) {
 	t.Parallel()
 
-	pool, err := NewDBXPool(context.Background(), "", &StdLogger{}, tracelog.LogLevelInfo)
+	pool, err := NewDBXPool(context.Background(), zap.NewExample(), &StdLogger{}, tracelog.LogLevelInfo, nil)
 	if err != nil {
 		t.Fatalf("NewPGXPool() error: %v", err)
 	}
@@ -38,10 +39,11 @@ func TestNewPGXPool(t *testing.T) {
 func TestNewPGXPoolErrors(t *testing.T) {
 	t.Parallel()
 	type args struct {
-		ctx        context.Context
-		connString string
-		logger     tracelog.Logger
-		logLevel   tracelog.LogLevel
+		ctx         context.Context
+		logger      *zap.Logger
+		traceLogger tracelog.Logger
+		logLevel    tracelog.LogLevel
+		config      *config.Config
 	}
 	tests := []struct {
 		name    string
@@ -52,10 +54,11 @@ func TestNewPGXPoolErrors(t *testing.T) {
 		{
 			name: "invalid_connection_string",
 			args: args{
-				ctx:        context.Background(),
-				connString: "http://localhost",
-				logger:     testingadapter.NewLogger(t),
-				logLevel:   tracelog.LogLevelInfo,
+				ctx:         context.Background(),
+				logger:      zap.NewExample(),
+				traceLogger: &StdLogger{},
+				logLevel:    tracelog.LogLevelInfo,
+				config:      nil,
 			},
 			want:    nil,
 			wantErr: true,
@@ -63,7 +66,7 @@ func TestNewPGXPoolErrors(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewDBXPool(tt.args.ctx, tt.args.connString, tt.args.logger, tt.args.logLevel)
+			got, err := NewDBXPool(tt.args.ctx, tt.args.logger, tt.args.traceLogger, tt.args.logLevel, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewPGXPool() error = %v, wantErr %v", err, tt.wantErr)
 				return
