@@ -20,3 +20,5 @@ testdata/files/dante.txt
 
 testdata/*
 aws/**/*_test.go
+
+vendor

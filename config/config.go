@@ -122,11 +122,27 @@ type Config struct {
 	} `mapstructure:"DB"`
 	Cache struct {
 		Redis struct {
-			Host string `mapstructure:"HOST"`
-			Port int    `mapstructure:"PORT"`
-			DB   int    `mapstructure:"DB"`
-			Pass string `mapstructure:"PASS"`
-		}
+			Host              string   `mapstructure:"HOST"`
+			Port              int      `mapstructure:"PORT"`
+			DB                int      `mapstructure:"DB"`
+			Pass              string   `mapstructure:"PASS"`
+			PoolSize          int      `mapstructure:"POOL_SIZE"`
+			MinIdleConns      int      `mapstructure:"MIN_IDLE_CONNS"`
+			IdleTimeout       string   `mapstructure:"IDLE_TIMEOUT"`       // Use string for duration parsing
+			DefaultExpiration string   `mapstructure:"DEFAULT_EXPIRATION"` // Use string for duration parsing
+			MaxRetries        int      `mapstructure:"MAX_RETRIES"`
+			MinRetryBackoff   string   `mapstructure:"MIN_RETRY_BACKOFF"`
+			MaxRetryBackoff   string   `mapstructure:"MAX_RETRY_BACKOFF"`
+			Encoding          string   `mapstructure:"ENCODING"`
+			IsCluster         bool     `mapstructure:"IS_CLUSTER"`
+			Addrs             []string `mapstructure:"ADDRESSES"` // Redis Cluster addresses
+			TLSEnabled        bool     `mapstructure:"TLS_ENABLED"`
+			TLSCaPath         string   `mapstructure:"TLS_CA_PATH"`
+			TLSCertPath       string   `mapstructure:"TLS_CERT_PATH"`
+			TLSKeyPath        string   `mapstructure:"TLS_KEY_PATH"`
+			TLSServerName     string   `mapstructure:"TLS_SERVER_NAME"`
+			TLSEnableHostname bool     `mapstructure:"TLS_ENABLE_HOSTNAME"`
+		} `mapstructure:"REDIS"`
 	} `mapstructure:"CACHE"`
 	Logging struct {
 		Level  string `mapstructure:"LEVEL"`
@@ -186,10 +202,18 @@ func InitConfig(logger *zap.Logger, path string, files []string) *Config {
 	cfg.DynamicConfigs = make(map[string]interface{})
 
 	// Load configuration files
-	for _, file := range files {
+	for i, file := range files {
 		v.SetConfigFile(fmt.Sprintf("%s/%s", path, file))
-		if err := v.MergeInConfig(); err != nil {
-			logger.Warn("Config file load error (continuing)", zap.Error(err))
+		if i == 0 {
+			// Read the first config file
+			if err := v.ReadInConfig(); err != nil {
+				logger.Warn("Config file load error (continuing)", zap.Error(err))
+			}
+		} else {
+			// Merge subsequent config files
+			if err := v.MergeInConfig(); err != nil {
+				logger.Warn("Config file merge error (continuing)", zap.Error(err))
+			}
 		}
 	}
 
