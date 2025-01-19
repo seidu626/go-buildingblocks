@@ -22,3 +22,5 @@ testdata/*
 aws/**/*_test.go
 
 vendor
+
+testdata/config_testdata/*

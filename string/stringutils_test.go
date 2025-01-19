@@ -11,9 +11,9 @@ import (
 	arrayutils "github.com/seidu626/go-buildingblocks/array"
 )
 
-const distance1 string = `../testdata/files/testDistance.txt`
-const distance2 string = `../testdata/files/testDistance1.txt`
-const danteDataset string = `../testdata/files/dante.txt`
+const distance1 string = `../config_testdata/files/testDistance.txt`
+const distance2 string = `../config_testdata/files/testDistance1.txt`
+const danteDataset string = `../config_testdata/files/dante.txt`
 
 func TestExtractUpperBlock(t *testing.T) {
 	for _, test := range []string{"test_ID", "test_ID_test", "Test_ID_TEST", "test_ID_test_ID", "test ID", "test_ID test", "Test ID TEST", "test ID_test ID", "TestID", "TestId"} {

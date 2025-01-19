@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-const danteDataset string = `../testdata/files/dante.txt`
+const danteDataset string = `../config_testdata/files/dante.txt`
 
 func BenchmarkTestIsUpperByteOK(b *testing.B) {
 	content, err := os.ReadFile(danteDataset)
