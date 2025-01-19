@@ -21,14 +21,14 @@ type UniversalClient interface {
 type RedisKitClient struct {
 	client        UniversalClient
 	cache         *RedisCache
-	config        Config
+	config        *Config
 	isCluster     bool
 	encoder       Encoder
 	clusterClient *redis.ClusterClient
 }
 
 // NewRedisKitClient initializes and returns a RedisKitClient
-func NewRedisKitClient(cfg Config) (*RedisKitClient, error) {
+func NewRedisKitClient(cfg *Config) (*RedisKitClient, error) {
 	var client UniversalClient
 	var err error
 

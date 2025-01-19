@@ -11,7 +11,7 @@ import (
 )
 
 // ConvertToRedisKitConfig converts a general config.Config to rediskit.Config
-func ConvertToRedisKitConfig(appConfig config.Config) (Config, error) {
+func ConvertToRedisKitConfig(appConfig *config.Config) (Config, error) {
 	redisConf := appConfig.Cache.Redis
 
 	// Validate Redis configuration
